@@ -1,0 +1,3 @@
+[submodule "src/spot_ros2"]
+	path = src/spot_ros2
+	url = git@github.com:jacob-m-nash/spot_ros2.git
