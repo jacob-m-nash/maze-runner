@@ -4,7 +4,7 @@
   <name>maze_builder</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer></maintainer>
+  <maintainer email="jacob-m-nash@users.noreply.github.com">jacob</maintainer>
   <license>TODO: License declaration</license>
 
   <depend>rclpy</depend>
