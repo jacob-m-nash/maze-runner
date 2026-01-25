@@ -1,6 +1,7 @@
 #include "maze_generator/maze_service.hpp"
 #include "maze_generator/binary_tree.hpp"
 #include "maze_generator/grid.hpp"
+#include "maze_generator/side_winder.hpp"
 #include <maze_interfaces/srv/detail/generate_maze__struct.hpp>
 #include <memory>
 #include <rclcpp/executors.hpp>
@@ -19,10 +20,14 @@ void MazeService::generate_maze(
     std::shared_ptr<maze_interfaces::srv::GenerateMaze::Response> response) {
   RCLCPP_INFO(this->get_logger(), "Generating %dx%d maze", request->rows,
               request->columns);
-  Grid grid(request->rows, request->columns);
-  BinaryTree::on(grid);
-  RCLCPP_INFO(this->get_logger(), "Maze generated");
-  RCLCPP_INFO_STREAM(this->get_logger(), grid.to_string());
+  Grid binary_grid(request->rows, request->columns);
+  BinaryTree::on(binary_grid);
+  RCLCPP_INFO(this->get_logger(), "Binary tree Maze generated");
+  RCLCPP_INFO_STREAM(this->get_logger(), binary_grid.to_string());
+  Grid side_winder_grid(request->rows, request->columns);
+  SideWinder::on(side_winder_grid);
+  RCLCPP_INFO(this->get_logger(), "side_winder Maze generated");
+  RCLCPP_INFO_STREAM(this->get_logger(), side_winder_grid.to_string());
   response->success = true;
 }
 

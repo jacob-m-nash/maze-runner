@@ -11,7 +11,7 @@ void BinaryTree::on(Grid &grid) {
         neigbours.push_back(cell.east);
       }
       if (!neigbours.empty()) {
-        int index = rand_num_gen::random_int(0, neigbours.size() - 1);
+        int index = RandomNumberGenerator::random_int(0, neigbours.size() - 1);
         Cell *neigbour = neigbours[index];
         cell.link(neigbour);
       }

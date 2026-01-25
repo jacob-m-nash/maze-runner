@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 Grid::Grid(int rows, int columns) {
-  this->rows = rows;
-  this->columns = columns;
+  this->rows_ = rows;
+  this->columns_ = columns;
   this->grid = Grid::prepare_grid(rows, columns);
   configure_cells();
 }
@@ -33,21 +33,21 @@ void Grid::configure_cells() {
   }
 }
 Cell *Grid::at(int row, int col) {
-  if (row < 0 || row >= rows || col < 0 || col >= columns) {
+  if (row < 0 || row >= rows_ || col < 0 || col >= columns_) {
     return nullptr;
   }
   return &grid[row][col];
 }
 Cell *Grid::random_cell() {
-  int row = rand_num_gen::random_int(0, rows - 1);
-  int col = rand_num_gen::random_int(0, columns - 1);
+  int row = RandomNumberGenerator::random_int(0, rows_ - 1);
+  int col = RandomNumberGenerator::random_int(0, columns_ - 1);
   return at(row, col);
 }
-int Grid::size() { return rows * columns; }
+int Grid::size() { return rows_ * columns_; }
 
 std::string Grid::to_string() {
   std::string output = "\n+";
-  for (int i = 0; i < columns; i++) {
+  for (int i = 0; i < columns_; i++) {
     output += "---+";
   }
   output += "\n";
