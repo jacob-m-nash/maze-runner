@@ -2,6 +2,7 @@
 #define GRID_HPP
 
 #include "maze_generator/cell.hpp"
+#include <string>
 #include <vector>
 class Grid {
 public:
@@ -9,6 +10,7 @@ public:
   std::vector<std::vector<Cell>> grid;
   Grid(int rows, int columns);
   int size();
+  std::string to_string();
 
 private:
   std::vector<std::vector<Cell>> prepare_grid(int rows, int columns);

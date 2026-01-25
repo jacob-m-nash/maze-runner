@@ -22,6 +22,7 @@ void MazeService::generate_maze(
   Grid grid(request->rows, request->columns);
   BinaryTree::on(grid);
   RCLCPP_INFO(this->get_logger(), "Maze generated");
+  RCLCPP_INFO_STREAM(this->get_logger(), grid.to_string());
   response->success = true;
 }
 

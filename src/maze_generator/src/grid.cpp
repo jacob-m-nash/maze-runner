@@ -1,5 +1,6 @@
 #include "maze_generator/grid.hpp"
 #include "maze_generator/rand_num_gen.hpp"
+#include <string>
 #include <vector>
 Grid::Grid(int rows, int columns) {
   this->rows = rows;
@@ -43,3 +44,27 @@ Cell *Grid::random_cell() {
   return at(row, col);
 }
 int Grid::size() { return rows * columns; }
+
+std::string Grid::to_string() {
+  std::string output = "\n+";
+  for (int i = 0; i < columns; i++) {
+    output += "---+";
+  }
+  output += "\n";
+  for (auto &row : grid) {
+    std::string top = "|";
+    std::string bottom = "+";
+    for (auto &cell : row) {
+      std::string body = "   ";
+      std::string east_boundary = cell.linked(cell.east) ? " " : "|";
+      top += body + east_boundary;
+
+      std::string south_boundary = cell.linked(cell.south) ? "   " : "---";
+      std::string corner = "+";
+      bottom += south_boundary + corner;
+    }
+    output += top + "\n";
+    output += bottom + "\n";
+  }
+  return output;
+}
