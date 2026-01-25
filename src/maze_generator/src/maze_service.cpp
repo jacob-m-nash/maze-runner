@@ -1,4 +1,5 @@
 #include "maze_generator/maze_service.hpp"
+#include "maze_generator/aldous_broder.hpp"
 #include "maze_generator/binary_tree.hpp"
 #include "maze_generator/grid.hpp"
 #include "maze_generator/side_winder.hpp"
@@ -24,10 +25,16 @@ void MazeService::generate_maze(
   BinaryTree::on(binary_grid);
   RCLCPP_INFO(this->get_logger(), "Binary tree Maze generated");
   RCLCPP_INFO_STREAM(this->get_logger(), binary_grid.to_string());
+
   Grid side_winder_grid(request->rows, request->columns);
   SideWinder::on(side_winder_grid);
   RCLCPP_INFO(this->get_logger(), "side_winder Maze generated");
   RCLCPP_INFO_STREAM(this->get_logger(), side_winder_grid.to_string());
+
+  Grid aldous_broder_grid(request->rows, request->columns);
+  AldousBroder::on(aldous_broder_grid);
+  RCLCPP_INFO(this->get_logger(), "Aldous Broder Maze generated");
+  RCLCPP_INFO_STREAM(this->get_logger(), aldous_broder_grid.to_string());
   response->success = true;
 }
 

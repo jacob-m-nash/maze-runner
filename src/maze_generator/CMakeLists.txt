@@ -11,7 +11,7 @@ find_package(rclcpp REQUIRED)
 find_package(maze_interfaces REQUIRED)
 include_directories(include)
 add_library(maze_generator src/grid.cpp src/cell.cpp src/binary_tree.cpp
-            src/rand_num_gen.cpp src/side_winder.cpp)
+            src/rand_num_gen.cpp src/side_winder.cpp src/aldous_broder.cpp)
 target_include_directories(maze_generator PUBLIC include)
 ament_target_dependencies(maze_generator rclcpp maze_interfaces)
 add_executable(maze_service src/maze_service.cpp)

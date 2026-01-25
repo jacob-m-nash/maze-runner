@@ -10,13 +10,13 @@ public:
   Grid(int rows, int columns);
   int size();
   std::string to_string();
+  Cell *random_cell();
 
 private:
   int rows_, columns_;
   std::vector<std::vector<Cell>> prepare_grid(int rows, int columns);
   void configure_cells();
   Cell *at(int row, int column);
-  Cell *random_cell();
 };
 
 #endif // !GRID_HPP
