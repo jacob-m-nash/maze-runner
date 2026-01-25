@@ -3,6 +3,7 @@
 #include "maze_generator/binary_tree.hpp"
 #include "maze_generator/grid.hpp"
 #include "maze_generator/side_winder.hpp"
+#include "maze_generator/wilsons.hpp"
 #include <maze_interfaces/srv/detail/generate_maze__struct.hpp>
 #include <memory>
 #include <rclcpp/executors.hpp>
@@ -35,6 +36,11 @@ void MazeService::generate_maze(
   AldousBroder::on(aldous_broder_grid);
   RCLCPP_INFO(this->get_logger(), "Aldous Broder Maze generated");
   RCLCPP_INFO_STREAM(this->get_logger(), aldous_broder_grid.to_string());
+
+  Grid wilsons_grid(request->rows, request->columns);
+  Wilsons::on(wilsons_grid);
+  RCLCPP_INFO(this->get_logger(), "Wilsons Maze generated");
+  RCLCPP_INFO_STREAM(this->get_logger(), wilsons_grid.to_string());
   response->success = true;
 }
 
