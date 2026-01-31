@@ -7,16 +7,16 @@
 void HuntAndKill::on(Grid &grid) {
   Cell *current = grid.random_cell();
   while (current) {
-    std::vector<Cell *> unvistated_neigbors;
-    for (Cell *neighbour : current->neighbors()) {
-      if (neighbour && neighbour->links().empty()) {
-        unvistated_neigbors.push_back(neighbour);
+    std::vector<Cell *> unvisited_neigbors;
+    for (Cell *neighbor : current->neighbors()) {
+      if (neighbor && neighbor->links().empty()) {
+        unvisited_neigbors.push_back(neighbor);
       }
     }
-    if (unvistated_neigbors.size() > 0) {
+    if (unvisited_neigbors.size() > 0) {
       int index =
-          RandomNumberGenerator::random_int(0, unvistated_neigbors.size() - 1);
-      Cell *neighbour = unvistated_neigbors[index];
+          RandomNumberGenerator::random_int(0, unvisited_neigbors.size() - 1);
+      Cell *neighbour = unvisited_neigbors[index];
       current->link(neighbour);
       current = neighbour;
     } else {
@@ -25,9 +25,9 @@ void HuntAndKill::on(Grid &grid) {
     for (auto &row : grid.grid) {
       for (auto &cell : row) {
         std::vector<Cell *> visited_neigbors;
-        for (Cell *neighbour : cell.neighbors()) {
-          if (!neighbour->links().empty()) {
-            visited_neigbors.push_back(neighbour);
+        for (Cell *neighbor : cell.neighbors()) {
+          if (!neighbor->links().empty()) {
+            visited_neigbors.push_back(neighbor);
           }
           if (cell.links().empty() && visited_neigbors.size() > 0) {
             current = &cell;
