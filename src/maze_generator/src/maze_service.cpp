@@ -41,6 +41,11 @@ void MazeService::generate_maze(
   Wilsons::on(wilsons_grid);
   RCLCPP_INFO(this->get_logger(), "Wilsons Maze generated");
   RCLCPP_INFO_STREAM(this->get_logger(), wilsons_grid.to_string());
+
+  Grid hunt_and_kill_grid(request->rows, request->columns);
+  Wilsons::on(hunt_and_kill_grid);
+  RCLCPP_INFO(this->get_logger(), "Hunt and Kill Maze generated");
+  RCLCPP_INFO_STREAM(this->get_logger(), hunt_and_kill_grid.to_string());
   response->success = true;
 }
 

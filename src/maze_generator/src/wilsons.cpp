@@ -6,7 +6,7 @@
 #include <vector>
 void Wilsons::on(Grid &grid) {
   std::unordered_set<Cell *> unvisited;
-  for (auto &row : grid.grid) { // Set up unvisited
+  for (auto &row : grid.grid) { // Set up unvisited (TODO: this is slow)
     for (auto &cell : row) {
       unvisited.insert(&cell);
     }
