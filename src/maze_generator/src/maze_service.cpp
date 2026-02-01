@@ -2,6 +2,7 @@
 #include "maze_generator/aldous_broder.hpp"
 #include "maze_generator/binary_tree.hpp"
 #include "maze_generator/grid.hpp"
+#include "maze_generator/recursive_backtracker.hpp"
 #include "maze_generator/side_winder.hpp"
 #include "maze_generator/wilsons.hpp"
 #include <maze_interfaces/srv/detail/generate_maze__struct.hpp>
@@ -46,6 +47,12 @@ void MazeService::generate_maze(
   Wilsons::on(hunt_and_kill_grid);
   RCLCPP_INFO(this->get_logger(), "Hunt and Kill Maze generated");
   RCLCPP_INFO_STREAM(this->get_logger(), hunt_and_kill_grid.to_string());
+
+  Grid recursive_backtracker_grid(request->rows, request->columns);
+  RecursiveBacktracker::on(recursive_backtracker_grid);
+  RCLCPP_INFO(this->get_logger(), "Hunt and Kill Maze generated");
+  RCLCPP_INFO_STREAM(this->get_logger(),
+                     recursive_backtracker_grid.to_string());
   response->success = true;
 }
 
