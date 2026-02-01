@@ -9,7 +9,7 @@ public:
   static auto sample(const Container &container) // TODO: use
       -> decltype(*std::begin(container)) {
     auto size = std::distance(std::begin(container), std::end(container));
-    auto index = randon_int(0, size - 1);
+    auto index = random_int(0, size - 1);
     auto it = std::begin(container);
     std::advance(it, index);
     return *it;
