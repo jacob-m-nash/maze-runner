@@ -11,6 +11,7 @@ public:
   int size();
   std::string to_string();
   Cell *random_cell();
+  std::vector<int32_t> to_wall_bitmask();
 
 private:
   int rows_, columns_;

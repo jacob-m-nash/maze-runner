@@ -2,14 +2,17 @@
 #include "maze_generator/aldous_broder.hpp"
 #include "maze_generator/binary_tree.hpp"
 #include "maze_generator/grid.hpp"
+#include "maze_generator/hunt_and_kill.hpp"
 #include "maze_generator/recursive_backtracker.hpp"
 #include "maze_generator/side_winder.hpp"
 #include "maze_generator/wilsons.hpp"
+#include <cstdint>
 #include <maze_interfaces/srv/detail/generate_maze__struct.hpp>
 #include <memory>
 #include <rclcpp/executors.hpp>
 #include <rclcpp/logging.hpp>
 #include <rclcpp/utilities.hpp>
+#include <vector>
 
 MazeService::MazeService() : Node("maze_service") {
   service_ = this->create_service<maze_interfaces::srv::GenerateMaze>(
@@ -22,38 +25,65 @@ void MazeService::generate_maze(
     const std::shared_ptr<maze_interfaces::srv::GenerateMaze::Request> request,
     std::shared_ptr<maze_interfaces::srv::GenerateMaze::Response> response) {
   RCLCPP_INFO(this->get_logger(), "Generating %dx%d maze", request->rows,
-              request->columns);
-  Grid binary_grid(request->rows, request->columns);
-  BinaryTree::on(binary_grid);
-  RCLCPP_INFO(this->get_logger(), "Binary tree Maze generated");
-  RCLCPP_INFO_STREAM(this->get_logger(), binary_grid.to_string());
+              request->columns); // TODO: select algorithum based on request
+  RCLCPP_INFO(this->get_logger(), "Using algorithum %s",
+              request->algorithum.c_str());
+  const auto &algorithum = request->algorithum;
+  Grid grid(request->rows, request->columns);
+  if (algorithum == "binary_tree") {
+    BinaryTree::on(grid);
+  } else if (algorithum == "side_winder") {
+    SideWinder::on(grid);
+  } else if (algorithum == "aldous_broder") {
+    AldousBroder::on(grid);
+  } else if (algorithum == "wilsons") {
+    Wilsons::on(grid);
+  } else if (algorithum == "hunt_and_kill") {
+    HuntAndKill::on(grid);
+  } else if (algorithum == "recursive_backtracker") {
+    RecursiveBacktracker::on(grid);
+  } else {
+    RCLCPP_ERROR(this->get_logger(), "Cannot parse algorithum %s",
+                 request->algorithum.c_str());
+    response->success = false;
+    response->error_message = "bad";
+    response->walls = std::vector<int32_t>();
+  }
 
-  Grid side_winder_grid(request->rows, request->columns);
-  SideWinder::on(side_winder_grid);
-  RCLCPP_INFO(this->get_logger(), "side_winder Maze generated");
-  RCLCPP_INFO_STREAM(this->get_logger(), side_winder_grid.to_string());
-
-  Grid aldous_broder_grid(request->rows, request->columns);
-  AldousBroder::on(aldous_broder_grid);
-  RCLCPP_INFO(this->get_logger(), "Aldous Broder Maze generated");
-  RCLCPP_INFO_STREAM(this->get_logger(), aldous_broder_grid.to_string());
-
-  Grid wilsons_grid(request->rows, request->columns);
-  Wilsons::on(wilsons_grid);
-  RCLCPP_INFO(this->get_logger(), "Wilsons Maze generated");
-  RCLCPP_INFO_STREAM(this->get_logger(), wilsons_grid.to_string());
-
-  Grid hunt_and_kill_grid(request->rows, request->columns);
-  Wilsons::on(hunt_and_kill_grid);
-  RCLCPP_INFO(this->get_logger(), "Hunt and Kill Maze generated");
-  RCLCPP_INFO_STREAM(this->get_logger(), hunt_and_kill_grid.to_string());
-
-  Grid recursive_backtracker_grid(request->rows, request->columns);
-  RecursiveBacktracker::on(recursive_backtracker_grid);
-  RCLCPP_INFO(this->get_logger(), "Hunt and Kill Maze generated");
-  RCLCPP_INFO_STREAM(this->get_logger(),
-                     recursive_backtracker_grid.to_string());
+  RCLCPP_INFO_STREAM(this->get_logger(), grid.to_string());
+  // Grid binary_grid(request->rows, request->columns);
+  // BinaryTree::on(binary_grid);
+  // RCLCPP_INFO(this->get_logger(), "Binary tree Maze generated");
+  // RCLCPP_INFO_STREAM(this->get_logger(), binary_grid.to_string());
+  //
+  // Grid side_winder_grid(request->rows, request->columns);
+  // SideWinder::on(side_winder_grid);
+  // RCLCPP_INFO(this->get_logger(), "side_winder Maze generated");
+  // RCLCPP_INFO_STREAM(this->get_logger(), side_winder_grid.to_string());
+  //
+  // Grid aldous_broder_grid(request->rows, request->columns);
+  // AldousBroder::on(aldous_broder_grid);
+  // RCLCPP_INFO(this->get_logger(), "Aldous Broder Maze generated");
+  // RCLCPP_INFO_STREAM(this->get_logger(), aldous_broder_grid.to_string());
+  //
+  // Grid wilsons_grid(request->rows, request->columns);
+  // Wilsons::on(wilsons_grid);
+  // RCLCPP_INFO(this->get_logger(), "Wilsons Maze generated");
+  // RCLCPP_INFO_STREAM(this->get_logger(), wilsons_grid.to_string());
+  //
+  // Grid hunt_and_kill_grid(request->rows, request->columns);
+  // HuntAndKill::on(hunt_and_kill_grid);
+  // RCLCPP_INFO(this->get_logger(), "Hunt and Kill Maze generated");
+  // RCLCPP_INFO_STREAM(this->get_logger(), hunt_and_kill_grid.to_string());
+  //
+  // Grid recursive_backtracker_grid(request->rows, request->columns);
+  // RecursiveBacktracker::on(recursive_backtracker_grid);
+  // RCLCPP_INFO(this->get_logger(), "Recursive Backtracker Maze generated");
+  // RCLCPP_INFO_STREAM(this->get_logger(),
+  //                    recursive_backtracker_grid.to_string());
   response->success = true;
+  response->walls = grid.to_wall_bitmask();
+  response->error_message = "";
 }
 
 int main(int argc, char *argv[]) {

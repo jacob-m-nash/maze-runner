@@ -68,3 +68,26 @@ std::string Grid::to_string() {
   }
   return output;
 }
+std::vector<int32_t> Grid::to_wall_bitmask() {
+  std::vector<int32_t> walls;
+  walls.reserve(rows_ * columns_);
+  for (auto &row : grid) {
+    for (auto &cell : row) {
+      int32_t mask = 0;
+      if (!cell.linked(cell.north)) {
+        mask |= 1;
+      }
+      if (!cell.linked(cell.south)) {
+        mask |= 2;
+      }
+      if (!cell.linked(cell.east)) {
+        mask |= 4;
+      }
+      if (!cell.linked(cell.west)) {
+        mask |= 8;
+      }
+      walls.push_back(mask);
+    }
+  }
+  return walls;
+}
