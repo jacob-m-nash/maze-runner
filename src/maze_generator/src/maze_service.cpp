@@ -25,7 +25,7 @@ void MazeService::generate_maze(
     const std::shared_ptr<maze_interfaces::srv::GenerateMaze::Request> request,
     std::shared_ptr<maze_interfaces::srv::GenerateMaze::Response> response) {
   RCLCPP_INFO(this->get_logger(), "Generating %dx%d maze", request->rows,
-              request->columns); // TODO: select algorithum based on request
+              request->columns);
   RCLCPP_INFO(this->get_logger(), "Using algorithum %s",
               request->algorithum.c_str());
   const auto &algorithum = request->algorithum;
@@ -46,7 +46,7 @@ void MazeService::generate_maze(
     RCLCPP_ERROR(this->get_logger(), "Cannot parse algorithum %s",
                  request->algorithum.c_str());
     response->success = false;
-    response->error_message = "bad";
+    response->error_message = "Failed to generate maze due to bad request";
     response->walls = std::vector<int32_t>();
   }
 

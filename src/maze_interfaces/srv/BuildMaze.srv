@@ -1,0 +1,6 @@
+int32 rows
+int32 columns
+string algorithum
+---
+bool success
+string error_message

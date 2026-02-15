@@ -22,6 +22,8 @@ setup(
         ],
     },
     entry_points={
-        "console_scripts": [],
+        "console_scripts": [
+            "maze_builder = maze_builder.maze_builder:main",
+        ],
     },
 )
