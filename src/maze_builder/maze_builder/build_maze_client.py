@@ -9,7 +9,7 @@ class BuildMazeClient(Node):
         # Declare parameters
         self.declare_parameter("rows", 10)
         self.declare_parameter("columns", 10)
-        self.declare_parameter("algorithum", "recursive_backtracker")
+        self.declare_parameter("algorithm", "recursive_backtracker")
 
         self.declare_parameter("wall_size", 1)
         self.client = self.create_client(BuildMaze, "build_maze")
@@ -24,7 +24,7 @@ class BuildMazeClient(Node):
         request.rows = self.get_parameter("rows").value
         request.columns = self.get_parameter("columns").value
         request.wall_size = self.get_parameter("wall_size").value
-        request.algorithum = self.get_parameter("algorithum").value
+        request.algorithm = self.get_parameter("algorithm").value
 
         future = self.client.call_async(request)
         future.add_done_callback(self.response_callback)
@@ -43,4 +43,3 @@ def main(args=None):
     node = BuildMazeClient()
     rclpy.spin(node)
     rclpy.shutdown()
-

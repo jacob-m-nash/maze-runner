@@ -9,8 +9,8 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    algorithum_arg = DeclareLaunchArgument(
-        "algorithum", default_value="recursive_backtracker"
+    algorithm_arg = DeclareLaunchArgument(
+        "algorithm", default_value="recursive_backtracker"
     )
     rows_arg = DeclareLaunchArgument("rows", default_value="10")
     cols_arg = DeclareLaunchArgument("cols", default_value="10")
@@ -26,7 +26,8 @@ def generate_launch_description():
         ),
         launch_arguments={"world": ""}.items(),
     )
-
+    test = "thed mustake"
+    test += "s"
     maze_generator = Node(
         package="maze_generator",
         executable="maze_service",
@@ -50,14 +51,14 @@ def generate_launch_description():
                 "rows": LaunchConfiguration("rows"),
                 "columns": LaunchConfiguration("cols"),
                 "wall_size": LaunchConfiguration("wall_size"),
-                "algorithum": LaunchConfiguration("algorithum"),
+                "algorithm": LaunchConfiguration("algorithm"),
             }
         ],
     )
 
     return LaunchDescription(
         [
-            algorithum_arg,
+            algorithm_arg,
             rows_arg,
             cols_arg,
             wall_size_arg,

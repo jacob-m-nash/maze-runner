@@ -3,17 +3,17 @@
 void BinaryTree::on(Grid &grid) {
   for (auto &row : grid.grid) {
     for (auto &cell : row) {
-      std::vector<Cell *> neigbours;
+      std::vector<Cell *> neighbours;
       if (cell.north) {
-        neigbours.push_back(cell.north);
+        neighbours.push_back(cell.north);
       }
       if (cell.east) {
-        neigbours.push_back(cell.east);
+        neighbours.push_back(cell.east);
       }
-      if (!neigbours.empty()) {
-        int index = RandomNumberGenerator::random_int(0, neigbours.size() - 1);
-        Cell *neigbour = neigbours[index];
-        cell.link(neigbour);
+      if (!neighbours.empty()) {
+        int index = RandomNumberGenerator::random_int(0, neighbours.size() - 1);
+        Cell *neighbour = neighbours[index];
+        cell.link(neighbour);
       }
     }
   }

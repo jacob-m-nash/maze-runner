@@ -1,6 +1,6 @@
 int32 rows
 int32 columns
-string algorithum
+string algorithm
 ---
 bool success
 string error_message

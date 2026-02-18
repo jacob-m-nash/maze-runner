@@ -6,11 +6,11 @@ void SideWinder::on(Grid &grid) {
     std::vector<Cell *> run;
     for (auto &cell : row) {
       run.push_back(&cell);
-      bool at_eastern_boundry = cell.east == nullptr;
-      bool at_northen_boundry = cell.north == nullptr;
+      bool at_eastern_boundary = cell.east == nullptr;
+      bool at_northern_boundary = cell.north == nullptr;
 
-      if (at_eastern_boundry ||
-          (!at_northen_boundry &&
+      if (at_eastern_boundary ||
+          (!at_northern_boundary &&
            RandomNumberGenerator::random_int(0, 1) == 0)) {
         int index = RandomNumberGenerator::random_int(0, run.size() - 1);
         Cell *member = run[index];

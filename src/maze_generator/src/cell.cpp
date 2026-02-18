@@ -25,15 +25,15 @@ std::vector<Cell *> Cell::links() {
 }
 bool Cell::linked(Cell *cell) { return links_.find(cell) != links_.end(); }
 
-std::vector<Cell *> Cell::neighbors() {
-  std::vector<Cell *> neighbors;
+std::vector<Cell *> Cell::neighbours() {
+  std::vector<Cell *> neighbours;
   if (north)
-    neighbors.push_back(north);
+    neighbours.push_back(north);
   if (south)
-    neighbors.push_back(south);
+    neighbours.push_back(south);
   if (east)
-    neighbors.push_back(east);
+    neighbours.push_back(east);
   if (west)
-    neighbors.push_back(west);
-  return neighbors;
+    neighbours.push_back(west);
+  return neighbours;
 }

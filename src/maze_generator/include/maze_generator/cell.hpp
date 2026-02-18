@@ -12,7 +12,7 @@ public:
   void unlink(Cell *cell, bool bidi = true);
   std::vector<Cell *> links();
   bool linked(Cell *cell);
-  std::vector<Cell *> neighbors();
+  std::vector<Cell *> neighbours();
 
 private:
   std::unordered_map<Cell *, bool> links_;

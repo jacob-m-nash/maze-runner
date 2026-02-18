@@ -5,12 +5,12 @@ void AldousBroder::on(Grid &grid) {
   int unvisitied = grid.size() - 1;
   while (unvisitied > 0) {
     int index =
-        RandomNumberGenerator::random_int(0, cell->neighbors().size() - 1);
-    Cell *neighbor = cell->neighbors()[index];
-    if (neighbor->links().size() == 0) {
-      cell->link(neighbor);
+        RandomNumberGenerator::random_int(0, cell->neighbours().size() - 1);
+    Cell *neighbours = cell->neighbours()[index];
+    if (neighbours->links().size() == 0) {
+      cell->link(neighbours);
       unvisitied -= 1;
     }
-    cell = neighbor;
+    cell = neighbours;
   }
 }

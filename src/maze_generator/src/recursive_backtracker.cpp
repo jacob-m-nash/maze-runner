@@ -8,18 +8,18 @@ void RecursiveBacktracker::on(Cell *start_on) {
   stack.push(start_on);
   while (!stack.empty()) {
     Cell *current = stack.top();
-    std::vector<Cell *> neighbors;
-    for (Cell *cell : current->neighbors()) {
+    std::vector<Cell *> neighbours;
+    for (Cell *cell : current->neighbours()) {
       if (cell->links().empty()) {
-        neighbors.push_back(cell);
+        neighbours.push_back(cell);
       }
     }
-    if (neighbors.empty()) {
+    if (neighbours.empty()) {
       stack.pop();
     } else {
-      Cell *neighbor = RandomNumberGenerator::sample(neighbors);
-      current->link(neighbor);
-      stack.push(neighbor);
+      Cell *neighbour = RandomNumberGenerator::sample(neighbours);
+      current->link(neighbour);
+      stack.push(neighbour);
     }
   }
 }

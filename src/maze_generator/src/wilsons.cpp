@@ -33,7 +33,7 @@ void Wilsons::on(Grid &grid) {
     std::vector<Cell *> path;
     path.push_back(cell);
     while (unvisited_index.count(cell)) {
-      cell = RandomNumberGenerator::sample(cell->neighbors());
+      cell = RandomNumberGenerator::sample(cell->neighbours());
       // if this next cell is in path we have a loop
       auto it = std::find(path.begin(), path.end(), cell);
       if (it != path.end()) {

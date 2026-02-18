@@ -26,25 +26,25 @@ void MazeService::generate_maze(
     std::shared_ptr<maze_interfaces::srv::GenerateMaze::Response> response) {
   RCLCPP_INFO(this->get_logger(), "Generating %dx%d maze", request->rows,
               request->columns);
-  RCLCPP_INFO(this->get_logger(), "Using algorithum %s",
-              request->algorithum.c_str());
-  const auto &algorithum = request->algorithum;
+  RCLCPP_INFO(this->get_logger(), "Using algorithm %s",
+              request->algorithm.c_str());
+  const auto &algorithm = request->algorithm;
   Grid grid(request->rows, request->columns);
-  if (algorithum == "binary_tree") {
+  if (algorithm == "binary_tree") {
     BinaryTree::on(grid);
-  } else if (algorithum == "side_winder") {
+  } else if (algorithm == "side_winder") {
     SideWinder::on(grid);
-  } else if (algorithum == "aldous_broder") {
+  } else if (algorithm == "aldous_broder") {
     AldousBroder::on(grid);
-  } else if (algorithum == "wilsons") {
+  } else if (algorithm == "wilsons") {
     Wilsons::on(grid);
-  } else if (algorithum == "hunt_and_kill") {
+  } else if (algorithm == "hunt_and_kill") {
     HuntAndKill::on(grid);
-  } else if (algorithum == "recursive_backtracker") {
+  } else if (algorithm == "recursive_backtracker") {
     RecursiveBacktracker::on(grid);
   } else {
-    RCLCPP_ERROR(this->get_logger(), "Cannot parse algorithum %s",
-                 request->algorithum.c_str());
+    RCLCPP_ERROR(this->get_logger(), "Cannot parse algorithm %s",
+                 request->algorithm.c_str());
     response->success = false;
     response->error_message = "Failed to generate maze due to bad request";
     response->walls = std::vector<int32_t>();

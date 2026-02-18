@@ -31,7 +31,7 @@ class MazeBuilder(Node):
             return response
 
         gen_request = GenerateMaze.Request()
-        gen_request.algorithum = request.algorithum
+        gen_request.algorithm = request.algorithm
         gen_request.rows = request.rows
         gen_request.columns = request.columns
 
@@ -51,8 +51,11 @@ class MazeBuilder(Node):
 
     async def decode_walls(self, walls, rows, columns, wall_size):
         NORTH, SOUTH, EAST, WEST = 1, 2, 4, 8
-        wall_thikness = 0.1
+        wall_thickness = 0.1
+        wall_height = 0.5
         spawned_walls = set()
+        wall_count = 0
+        links_sdf = ""
         for row in range(rows):
             for col in range(columns):
                 mask = walls[row * columns + col]
@@ -61,80 +64,89 @@ class MazeBuilder(Node):
                 if mask & NORTH:
                     wall_key = ("h", row + 1, col)
                     if wall_key not in spawned_walls:
-                        await self.spawn_wall(
+                        links_sdf += self.add_Link(
+                            wall_count,
                             x,
                             y + wall_size / 2,
                             wall_size,
-                            wall_thikness,
-                            f"wall_{row}_{col}_n",
+                            wall_thickness,
+                            wall_height,
                         )
                         spawned_walls.add(wall_key)
+                        wall_count += 1
 
                 if mask & SOUTH:
                     wall_key = ("h", row, col)
                     if wall_key not in spawned_walls:
-                        await self.spawn_wall(
+                        links_sdf += self.add_Link(
+                            wall_count,
                             x,
                             y - wall_size / 2,
                             wall_size,
-                            wall_thikness,
-                            f"wall_{row}_{col}_s",
+                            wall_thickness,
+                            wall_height,
                         )
                         spawned_walls.add(wall_key)
+                        wall_count += 1
+
                 if mask & EAST:
                     wall_key = ("v", row, col + 1)
                     if wall_key not in spawned_walls:
-                        await self.spawn_wall(
+                        links_sdf += self.add_Link(
+                            wall_count,
                             x + wall_size / 2,
                             y,
-                            wall_thikness,
+                            wall_thickness,
                             wall_size,
-                            f"wall_{row}_{col}_e",
+                            wall_height,
                         )
                         spawned_walls.add(wall_key)
+                        wall_count += 1
+
                 if mask & WEST:
                     wall_key = ("v", row, col)
                     if wall_key not in spawned_walls:
-                        await self.spawn_wall(
+                        links_sdf += self.add_Link(
+                            wall_count,
                             x - wall_size / 2,
                             y,
-                            wall_thikness,
+                            wall_thickness,
                             wall_size,
-                            f"wall_{row}_{col}_w",
+                            wall_height,
                         )
                         spawned_walls.add(wall_key)
-                # has_north_wall = bool(mask & NORTH)
-                # has_south_wall = bool(mask & SOUTH)
-                # has_east_wall = bool(mask & EAST)
-                # has_west_wall = bool(mask & WEST)
+                        wall_count += 1
 
-    async def spawn_wall(self, x, y, length_x, length_y, name):
         if not self.spawn_client.wait_for_service(1.0):
             self.get_logger().error("spawn service not avalanble")
             return
-        height = 0.5
+
         sdf = f"""<?xml version="1.0"?>
                     <sdf version="1.6">
-                    <model name="{name}">
-                        <static>true</static>
-                        <link name="link">
-                        <collision name="collision">
-                            <geometry><box><size>{length_x} {length_y} {height}</size></box></geometry>
-                        </collision>
-                        <visual name="visual">
-                            <geometry><box><size>{length_x} {length_y} {height}</size></box></geometry>
-                        </visual>
-                        </link>
+                    <model name="maze">
+                    <static>true</static>
+                    {links_sdf}
                     </model>
                     </sdf>"""
+
         request = SpawnEntity.Request()
-        request.name = name
+        request.name = "maze"
         request.xml = sdf
-        request.initial_pose.position.x = x
-        request.initial_pose.position.y = y
-        request.initial_pose.position.z = height / 2
         result = await self.spawn_client.call_async(request)
-        self.get_logger().info(f"spawned {name}: {result.success}")
+        self.get_logger().info(f"spawned maze: {result.success}")
+
+    def add_Link(self, id, x, y, length_x, length_y, height):
+        link_sdf = f""" 
+        <link name="wall_{id}">
+            <pose>{x} {y} {height / 2} 0 0 0</pose>
+            <collision name="collision">
+                <geometry><box><size>{length_x} {length_y} {height}</size></box></geometry>
+            </collision>
+            <visual name="visual">
+                <geometry><box><size>{length_x} {length_y} {height}</size></box></geometry>
+            </visual>
+        </link>"""
+        return link_sdf
 
 
 def main(args=None):
