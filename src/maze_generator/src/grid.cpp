@@ -71,8 +71,8 @@ std::string Grid::to_string() {
 std::vector<int32_t> Grid::to_wall_bitmask() {
   std::vector<int32_t> walls;
   walls.reserve(rows_ * columns_);
-  for (auto &row : grid) {
-    for (auto &cell : row) {
+  for (auto it = grid.rbegin(); it != grid.rend(); ++it) {
+    for (auto &cell : *it) {
       int32_t mask = 0;
       if (!cell.linked(cell.north)) {
         mask |= 1;

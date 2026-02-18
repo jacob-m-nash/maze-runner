@@ -1,5 +1,6 @@
 int32 rows
 int32 columns
+int32 wall_size
 string algorithum
 ---
 bool success
