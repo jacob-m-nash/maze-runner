@@ -11,7 +11,9 @@ class BuildMazeClient(Node):
         self.declare_parameter("columns", 10)
         self.declare_parameter("algorithm", "recursive_backtracker")
 
-        self.declare_parameter("wall_size", 1)
+        self.declare_parameter("wall_length", 1)
+        self.declare_parameter("wall_height", 1)
+        self.declare_parameter("wall_thickness", 0.1)
         self.client = self.create_client(BuildMaze, "build_maze")
 
         # Wait for service, then call it
@@ -23,7 +25,9 @@ class BuildMazeClient(Node):
         request = BuildMaze.Request()
         request.rows = self.get_parameter("rows").value
         request.columns = self.get_parameter("columns").value
-        request.wall_size = self.get_parameter("wall_size").value
+        request.wall_length = self.get_parameter("wall_length").value
+        request.wall_height = self.get_parameter("wall_height").value
+        request.wall_thickness = self.get_parameter("wall_thickness").value
         request.algorithm = self.get_parameter("algorithm").value
 
         future = self.client.call_async(request)

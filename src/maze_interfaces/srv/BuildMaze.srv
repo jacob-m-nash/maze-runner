@@ -1,5 +1,8 @@
 int32 rows
 int32 columns
+int32 wall_length
+int32 wall_height
+float32 wall_thickness
 int32 wall_size
 string algorithm
 ---

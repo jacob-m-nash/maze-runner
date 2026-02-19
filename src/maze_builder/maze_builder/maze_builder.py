@@ -1,5 +1,5 @@
 from maze_interfaces.srv import GenerateMaze, BuildMaze
-from gazebo_msgs.srv import SpawnEntity
+from ros_gz_interfaces.srv import SpawnEntity
 import rclpy
 from rclpy.node import Node
 from rclpy.callback_groups import ReentrantCallbackGroup
@@ -20,7 +20,7 @@ class MazeBuilder(Node):
             callback_group=self.callback_group,
         )
         self.spawn_client = self.create_client(
-            SpawnEntity, "/spawn_entity", callback_group=self.callback_group
+            SpawnEntity, "/world/empty/create", callback_group=self.callback_group
         )
         self.get_logger().info("maze_builder service ready")
 
@@ -37,8 +37,13 @@ class MazeBuilder(Node):
 
         gen_response = await self.generate_client.call_async(gen_request)
         if gen_response.success:
-            await self.decode_walls(
-                gen_response.walls, request.rows, request.columns, request.wall_size
+            await self.build_walls(
+                gen_response.walls,
+                request.rows,
+                request.columns,
+                request.wall_length,
+                request.wall_height,
+                request.wall_thickness,
             )
             response.success = True
             return response
@@ -49,26 +54,34 @@ class MazeBuilder(Node):
             )
             return response
 
-    async def decode_walls(self, walls, rows, columns, wall_size):
+    async def build_walls(
+        self, walls, rows, columns, wall_length, wall_height, wall_thickness
+    ):
+        link = await self.decode_walls(
+            walls, rows, columns, wall_length, wall_height, wall_thickness
+        )
+        await self.spawn_maze(link)
+
+    async def decode_walls(
+        self, walls, rows, columns, wall_length, wall_height, wall_thickness
+    ):
         NORTH, SOUTH, EAST, WEST = 1, 2, 4, 8
-        wall_thickness = 0.1
-        wall_height = 0.5
         spawned_walls = set()
         wall_count = 0
         links_sdf = ""
         for row in range(rows):
             for col in range(columns):
                 mask = walls[row * columns + col]
-                x = col * wall_size + wall_size / 2
-                y = row * wall_size + wall_size / 2
+                x = col * wall_length + wall_length / 2
+                y = row * wall_length + wall_length / 2
                 if mask & NORTH:
                     wall_key = ("h", row + 1, col)
                     if wall_key not in spawned_walls:
                         links_sdf += self.add_Link(
                             wall_count,
                             x,
-                            y + wall_size / 2,
-                            wall_size,
+                            y + wall_length / 2,
+                            wall_length,
                             wall_thickness,
                             wall_height,
                         )
@@ -81,8 +94,8 @@ class MazeBuilder(Node):
                         links_sdf += self.add_Link(
                             wall_count,
                             x,
-                            y - wall_size / 2,
-                            wall_size,
+                            y - wall_length / 2,
+                            wall_length,
                             wall_thickness,
                             wall_height,
                         )
@@ -94,10 +107,10 @@ class MazeBuilder(Node):
                     if wall_key not in spawned_walls:
                         links_sdf += self.add_Link(
                             wall_count,
-                            x + wall_size / 2,
+                            x + wall_length / 2,
                             y,
                             wall_thickness,
-                            wall_size,
+                            wall_length,
                             wall_height,
                         )
                         spawned_walls.add(wall_key)
@@ -108,15 +121,17 @@ class MazeBuilder(Node):
                     if wall_key not in spawned_walls:
                         links_sdf += self.add_Link(
                             wall_count,
-                            x - wall_size / 2,
+                            x - wall_length / 2,
                             y,
                             wall_thickness,
-                            wall_size,
+                            wall_length,
                             wall_height,
                         )
                         spawned_walls.add(wall_key)
                         wall_count += 1
+        return links_sdf
 
+    async def spawn_maze(self, links_sdf):
         if not self.spawn_client.wait_for_service(1.0):
             self.get_logger().error("spawn service not avalanble")
             return
@@ -130,8 +145,8 @@ class MazeBuilder(Node):
                     </sdf>"""
 
         request = SpawnEntity.Request()
-        request.name = "maze"
-        request.xml = sdf
+        request.entity_factory.name = "maze"
+        request.entity_factory.sdf = sdf
         result = await self.spawn_client.call_async(request)
         self.get_logger().info(f"spawned maze: {result.success}")
 

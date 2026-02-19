@@ -1,7 +1,7 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.events import IncludeLaunchDescription
-from launch.actions import IncludeLaunchDescription, ExecuteProcess
+from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
@@ -14,20 +14,10 @@ def generate_launch_description():
     )
     rows_arg = DeclareLaunchArgument("rows", default_value="10")
     cols_arg = DeclareLaunchArgument("cols", default_value="10")
-    wall_size_arg = DeclareLaunchArgument("wall_size", default_value="1")
+    wall_length_arg = DeclareLaunchArgument("wall_length", default_value="1")
+    wall_height_arg = DeclareLaunchArgument("wall_height", default_value="1")
+    wall_thickness_arg = DeclareLaunchArgument("wall_thickness", default_value="0.1")
 
-    gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            [
-                PathJoinSubstitution(
-                    [FindPackageShare("gazebo_ros"), "launch", "gazebo.launch.py"]
-                )
-            ]
-        ),
-        launch_arguments={"world": ""}.items(),
-    )
-    test = "thed mustake"
-    test += "s"
     maze_generator = Node(
         package="maze_generator",
         executable="maze_service",
@@ -41,6 +31,20 @@ def generate_launch_description():
         output="screen",
     )
 
+    gz_sim = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution(
+                [FindPackageShare("ros_gz_sim"), "launch", "gz_sim.launch.py"]
+            )
+        ),
+        launch_arguments={"gz_args": "-r empty.sdf"}.items(),
+    )
+    gz_bridge = Node(
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        arguments=["/world/empty/create@ros_gz_interfaces/srv/SpawnEntity"],
+        output="screen",
+    )
     build_maze_client = Node(
         package="maze_builder",
         executable="build_maze_client",
@@ -50,7 +54,9 @@ def generate_launch_description():
             {
                 "rows": LaunchConfiguration("rows"),
                 "columns": LaunchConfiguration("cols"),
-                "wall_size": LaunchConfiguration("wall_size"),
+                "wall_length": LaunchConfiguration("wall_length"),
+                "wall_height": LaunchConfiguration("wall_height"),
+                "wall_thickness": LaunchConfiguration("wall_thickness"),
                 "algorithm": LaunchConfiguration("algorithm"),
             }
         ],
@@ -61,8 +67,11 @@ def generate_launch_description():
             algorithm_arg,
             rows_arg,
             cols_arg,
-            wall_size_arg,
-            gazebo,
+            wall_length_arg,
+            wall_height_arg,
+            wall_thickness_arg,
+            gz_sim,
+            gz_bridge,
             maze_generator,
             maze_builder,
             build_maze_client,
