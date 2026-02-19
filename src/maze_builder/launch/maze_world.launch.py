@@ -1,6 +1,5 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.events import IncludeLaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
@@ -17,7 +16,6 @@ def generate_launch_description():
     wall_length_arg = DeclareLaunchArgument("wall_length", default_value="1")
     wall_height_arg = DeclareLaunchArgument("wall_height", default_value="1")
     wall_thickness_arg = DeclareLaunchArgument("wall_thickness", default_value="0.1")
-
     maze_generator = Node(
         package="maze_generator",
         executable="maze_service",
