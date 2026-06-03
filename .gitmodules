@@ -1,0 +1,7 @@
+[submodule "src/champ"]
+	path = src/champ
+	url = git@github.com:jacob-m-nash/champ.git
+[submodule "src/champ_teleop"]
+	path = src/champ_teleop
+	url = https://github.com/chvmp/champ_teleop
+	branch = ros2
