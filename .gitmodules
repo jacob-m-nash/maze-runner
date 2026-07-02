@@ -7,4 +7,7 @@
 	branch = ros2
 [submodule "src/robots"]
 	path = src/robots
-	url = https://github.com/chvmp/robots
+	url = git@github.com:jacob-m-nash/spot_config.git
+[submodule "src/hector_sensors_description"]
+	path = src/hector_sensors_description
+	url = git@github.com:jacob-m-nash/hector_sensors_description.git
